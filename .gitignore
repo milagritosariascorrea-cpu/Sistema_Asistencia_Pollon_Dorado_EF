@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# Datos personales de los trabajadores: no subir a GitHub
+data/*.csv
+data/*.xlsx
