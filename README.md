@@ -1,57 +1,83 @@
-# Sistema de control de asistencia — SG Aron's EIRL (Pollón Dorado)
+# Sistema de control de asistencia - SG Aron's EIRL (Pollón Dorado)
 
-Prototipo en **Python 3** para registrar la asistencia de los trabajadores de un restaurante con **2 turnos** (Mañana y Tarde) y calcular la **planilla mensual** (pago por horas trabajadas). Los datos se guardan en archivos CSV y el reporte se exporta a **Excel**.
+Proyecto del curso Fundamentos de Programación (CIIN1205P) - UPN.
+Es un prototipo en Python para el restaurante Pollón Dorado, con menú de consola y también con interfaz web que se abre en Chrome.
 
-Proyecto del curso **Fundamentos de Programación (CIIN1205P)** — Universidad Privada del Norte.
+### 1. CORE / Problemática
 
-## Integrantes
+En SG Aron's EIRL el control de asistencia se hace en un cuaderno. Ese es el problema central.
 
-| Integrante | Módulos |
-|---|---|
-| Arias Correa, Evelin Milagritos | `modulo_validaciones.py`, `pruebas.py` |
-| Luicho Mosqueira, Hector Alexander | `modulo_trabajadores.py` |
-| Mosqueira Tanta, Saul Alexander | `modulo_asistencia.py` |
-| Ocas Perez, Daniel Alexander | `modulo_persistencia.py`, `modulo_reportes.py` |
-| Valdez Quiroz, Victor Paul | `modulo_planilla.py`, `main.py` |
+- A veces no anotan la hora exacta de entrada y salida.
+- No se controlan las tardanzas porque hay 2 turnos (Mañana y Tarde) y cada uno entra a distinta hora.
+- La planilla se saca a mano al final del mes, contando horas con calculadora y se equivocan.
+- No hay reportes, si quieren ver faltas tienen que revisar el cuaderno hoja por hoja.
 
-## Requisitos
+Eso genera que se pague mal, que haya reclamos y desorden en los turnos.
 
-- Python 3.8 o superior
-- La librería `openpyxl` (solo para exportar a Excel):
+### 2. Objetivo general
 
-```
+Hacer un sistema en Python que registre las entradas y salidas, que detecte solo si es tardanza según el turno, y que calcule al final del mes cuantas horas trabajó cada persona y cuanto se le paga. Todo se exporta a Excel.
+
+### 3. Objetivos específicos
+
+- Registrar trabajadores con código tipo E001, nombres, DNI, cargo, turno y tarifa por hora.
+- Marcar entrada y salida por turno.
+- Calcular horas trabajadas y si hubo tardanza (Mañana tope 08:00, Tarde tope 14:00).
+- Guardar datos en CSV para que no se pierda al cerrar.
+- Generar planilla mensual (horas x tarifa).
+- Exportar reporte a Excel con 3 hojas: Empleados, Asistencias y Planilla mensual.
+- Cumplir con lo del curso: búsqueda binaria recursiva, burbuja, selección y recursividad.
+- Ofrecer una interfaz web (Flask + HTML) que se abre sola en Chrome a pantalla completa y usa los mismos módulos.
+- Trabajar todo en UTF-8 para aceptar tildes, ñ y otros caracteres especiales.
+
+### 4. Integrantes
+
+- Arias Correa, Evelin Milagritos - modulo_validaciones.py y pruebas.py
+- Luicho Mosqueira, Hector Alexander - modulo_trabajadores.py
+- Mosqueira Tanta, Saul Alexander - modulo_asistencia.py
+- Ocas Perez, Daniel Alexander - modulo_persistencia.py y modulo_reportes.py
+- Valdez Quiroz, Victor Paul - modulo_planilla.py y main.py
+
+### 5. Requisitos
+
+Python 3.8 o superior.
+Instalar openpyxl (para el Excel) y flask (para la interfaz web):
+
 pip install -r requirements.txt
-```
 
-## Cómo ejecutar
+Si no funciona:
 
-Abrir una terminal dentro de esta carpeta y ejecutar:
+pip install openpyxl flask
 
-```
-python main.py        # programa principal (menú)
-python pruebas.py     # 35 casos de prueba automáticos
-```
+### 6. Como ejecutar
 
-Al terminar `pruebas.py` debe mostrar `RESUMEN: 35/35 casos correctos`.
+Abrir la carpeta codigos en terminal y poner:
 
-## Estructura del proyecto
+python main.py     # abre el menú principal en la consola
+python app_web.py  # abre la interfaz web en Chrome (pantalla completa, F11 para salir)
+python pruebas.py  # corre las 36 pruebas, tiene que salir 36/36
 
-```
+La interfaz web queda en http://127.0.0.1:5000 y la terminal debe seguir abierta mientras se usa (Ctrl + C la detiene).
+
+### 7. Estructura de carpetas
+
 codigos/
-├── main.py                  Menú principal que integra todo
+├── main.py                  Menú principal que integra todo (consola)
+├── app_web.py               Interfaz web (Flask): conecta la página con los módulos
+├── templates/
+│   └── index.html           Página web (HTML + CSS): Trabajadores, Asistencia y Planilla mensual
 ├── modulo_validaciones.py   Reglas de validación (código, DNI, turno, fecha, hora, mes)
 ├── modulo_trabajadores.py   Registro, búsqueda (lineal y binaria recursiva) y orden burbuja
 ├── modulo_asistencia.py     Entrada/salida, horas, tardanza por turno, orden por selección
 ├── modulo_planilla.py       Horas del mes por turno y pago mensual
-├── modulo_persistencia.py   Lectura y escritura de archivos CSV
+├── modulo_persistencia.py   Lectura y escritura de archivos CSV (UTF-8)
 ├── modulo_reportes.py       Exportación a Excel (.xlsx)
 ├── pruebas.py               Casos de prueba automáticos
 ├── data/                    Aquí se guardan los CSV y el Excel (se crea sola)
 ├── requirements.txt
 └── README.md
-```
 
-## Menú del programa
+### 8. Menú
 
 | Opción | Acción |
 |---|---|
@@ -67,65 +93,43 @@ codigos/
 | 10 | Exportar el reporte completo a Excel (hojas Empleados, Asistencias y Planilla mensual) |
 | 0 | Salir (guarda todos los datos) |
 
-## Validación de los datos al escribirlos
+### 9. Interfaz web
 
-Cada dato se pide en un bucle: si es inválido, el programa explica el error y **repite la pregunta**; no avanza hasta recibir un dato correcto. Para volver al menú sin guardar, se escribe `cancelar`.
+Se ejecuta con `python app_web.py` y tiene 3 pestañas:
 
-| Dato | Regla |
+| Pestaña | Qué permite |
 |---|---|
-| Código | La letra E y 3 dígitos (`E001`); al registrar no puede repetirse y al marcar asistencia debe existir |
-| Nombres y apellidos | Solo letras (con tildes y ñ), espacios, guion o apóstrofe; no se aceptan números ni símbolos como `@` |
-| DNI | Exactamente 8 dígitos |
-| Cargo y turno | Un cargo de la lista y turno `M` o `T` |
-| Tarifa por hora | Número mayor que 0 |
-| Fecha, hora y mes | `AAAA-MM-DD` (fecha real), `HH:MM` y `AAAA-MM` |
+| Trabajadores | Registrar trabajador, listar y buscar por código (búsqueda binaria recursiva) |
+| Asistencia | Marcar entrada y salida, filtrar por código, ordenar por fecha y ver el total de tardanzas (las tardanzas salen en rojo) |
+| Planilla mensual | Generar la planilla de un mes (horas por turno × tarifa), ver el total y descargar el Excel |
 
-## Reglas de negocio
+Usa los mismos módulos y los mismos CSV que el menú de consola, así que ambos se pueden usar con los mismos datos. El HTML y el CSS están en `templates/index.html`; `app_web.py` solo conecta los botones con los módulos.
+
+### 10. Reglas de negocio
 
 - La empresa trabaja con **2 turnos**: `M` (Mañana) y `T` (Tarde).
-- Hora tope de entrada por turno: **Mañana 08:00** y **Tarde 14:00**. Son valores de ejemplo: deben confirmarse con la gerencia y se cambian en `HORA_TOPE_POR_TURNO` (ver «Cómo cambiar las horas tope»).
+- Hora tope de entrada por turno: **Mañana 08:00** y **Tarde 14:00**. Son valores de ejemplo configurables en `HORA_TOPE_POR_TURNO` (`modulo_asistencia.py`); deben confirmarse con la gerencia.
 - Una entrada posterior al tope de **su turno** se registra como tardanza.
 - El pago es **mensual**: horas trabajadas en el mes × tarifa por hora del trabajador.
 - Formatos: código `E###` (ejemplo `E001`), DNI de 8 dígitos, fecha `AAAA-MM-DD`, hora `HH:MM`, mes `AAAA-MM`.
 - Cargos válidos: Parrillero, Mesero, Caja, Cocina y Administracion.
 
-## Cómo cambiar las horas tope de cada turno
-
-Las horas tope están en `HORA_TOPE_POR_TURNO` (`modulo_asistencia.py`, líneas 19 a 22). Para usar las horas reales de la gerencia, cambien solo esos dos valores en formato `HH:MM`:
-
-```python
-HORA_TOPE_POR_TURNO = {
-    "Mañana": "08:00",
-    "Tarde": "14:00",
-}
-```
-
-Las pruebas fijan sus propios topes, así que `pruebas.py` sigue dando 35/35 aunque cambien estos valores.
-
-## Si la planilla sale en 0
-
-La planilla solo suma jornadas **cerradas** (con hora de salida) del **mes** que se pide. El programa muestra un aviso y la causa suele ser una de estas:
-
-| Aviso o síntoma | Qué hacer |
-|---|---|
-| «N jornada(s) sin hora de salida» | Marcar la salida con la opción 5 (misma fecha que la entrada) |
-| «no tiene asistencias en AAAA-MM» y se muestra la lista de meses con datos | Pedir un mes que aparezca en esa lista |
-| «asistencias de una version anterior no tenian turno» al iniciar | No hace falta hacer nada: se asigna el turno habitual del trabajador |
-
-Para revisar las jornadas de un trabajador use la opción 6.
-
-## Datos y privacidad
+### 11. Datos y privacidad
 
 Los archivos de la carpeta `data/` contienen datos personales (DNI, horarios y tarifas), protegidos por la Ley N.° 29733 (Protección de Datos Personales). Por eso el `.gitignore` **no sube** los `.csv` ni los `.xlsx` a GitHub. Si el Excel está abierto, el programa avisa y no se cierra: hay que cerrarlo y volver a exportar.
 
-## Temas del curso aplicados
+**Codificación UTF-8:** todo el proyecto usa UTF-8 (código con la cabecera `# -*- coding: utf-8 -*-`, CSV y página web), por lo que se aceptan tildes, ñ, ü, ç y cualquier letra en nombres y apellidos. Los CSV se guardan como UTF-8 con BOM (`utf-8-sig`, constante `CODIFICACION` en `modulo_persistencia.py`) para que Excel los abra sin deformar los acentos; al leer se aceptan archivos con o sin BOM.
 
-Estructuras de control (menú con `while` e `if/elif`), funciones y módulos, arreglos (listas de diccionarios), cadenas de caracteres, archivos CSV y Excel, recursividad (búsqueda binaria y conteo de tardanzas por mitades), ordenamiento (burbuja y selección) y manejo de excepciones (`try/except/finally`).
+**Portabilidad:** no hay base de datos; los datos son archivos CSV dentro de `data/` y no hay rutas fijas, por lo que el proyecto corre en otra computadora con solo Python, openpyxl y flask. Como `data/` no se sube a GitHub, para llevar los datos hay que copiar esa carpeta a mano.
 
-## Trabajo en equipo con Git
+### 12. Temas del curso que usamos
+
+if, while, funciones, módulos, listas de diccionarios, manejo de archivos csv y excel, try/except, recursividad, ordenamiento burbuja y selección. Como extra, una interfaz web con Flask y HTML.
+
+### 13. Trabajo con Git
 
 Cada integrante trabaja en su propia rama (`feature/validaciones`, `feature/empleados`, `feature/asistencia`, `feature/persistencia-reportes`, `feature/main-integracion`) y la une a `main` con un Pull Request.
 
-## Limitaciones conocidas
+### 14. Limitaciones
 
-Interfaz de consola sin usuarios ni contraseñas; la hora la digita una persona; no se contemplan turnos que cruzan la medianoche, horas extra, feriados ni la sucursal de cada trabajador.
+Interfaz de consola y web local sin usuarios ni contraseñas; la web corre en una sola computadora (un usuario a la vez, porque los datos están en CSV); la hora la digita una persona; no se contemplan turnos que cruzan la medianoche, horas extra, feriados ni la sucursal de cada trabajador.
